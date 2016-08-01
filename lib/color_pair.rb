@@ -10,6 +10,7 @@ module ColorPair
 
     def luminance
       # From http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+      # Different luminance algorithm: https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
       (0.299 * r + 0.587 * g + 0.114 * b)
     end
 
@@ -33,8 +34,9 @@ module ColorPair
     a.zip(b).map{|l, r| [l, r].max - [l, r].min}.reduce(:+)
   end
 
-  # I couldn't figure out the appropriate value from http://www.w3.org/TR/WCAG20/#contrast-ratiodef
-  # So I went with 1.0 because it resulted in pretty colors.
+  # "Contrast (Minimum): The visual presentation of text and images of text has
+  # a contrast ratio of at least 4.5:1 [...] (Level AA)"
+  # https://www.w3.org/TR/WCAG/#visual-audio-contrast
   def self.good_pair?(a, b)
     diff = color_difference(a, b)
 
