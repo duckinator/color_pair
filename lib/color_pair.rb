@@ -11,7 +11,7 @@ module ColorPair
           .split(",")
           .map(&:strip)
           .map(&method(:Integer))
-          .map { |i| (i == 0) ? 0 : (255.0 / i) }
+          .map { |i| i.to_f / 255.0 }
 
         RGB.new(r, g, b)
       else
