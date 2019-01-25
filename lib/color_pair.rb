@@ -103,7 +103,7 @@ module ColorPair
 
 #    return nil if possible.empty?
 
-    p possible
+#    p possible
 
     [base, possible.sample]
   end
