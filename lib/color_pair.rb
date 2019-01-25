@@ -72,7 +72,7 @@ module ColorPair
   def self.good_pair?(a, b)
     diff = contrast_ratio(a, b)
 
-    puts "#{diff.round(4)} #{[a, b].inspect}"
+    #puts "#{diff.round(4)} #{[a, b].inspect}"
 
     diff >= 4.5
   end
