@@ -2,24 +2,60 @@ $: << './lib'
 require 'sinatra'
 require 'color_pair'
 
+def css(fg, bg)
+  <<~EOF
+    body {
+      padding: 1em;
+      font-family: sans-serif;
+      max-width: 60ch;
+      margin: auto;
+      font-size: 120%;
+      color: #{fg};
+      background: #{bg};
+    }
+
+    input, textarea {
+      padding: 1em;
+      color:inherit;
+    }
+    input[type=text], textarea {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    input[type=submit], input[type=button] {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    textarea {
+      width: 100%;
+    }
+  EOF
+end
+
 get '/' do
-  raw_fg, raw_bg = ColorPair.random_pair
+  if params[:color]
+    color = ColorPair::RGB.parse(params[:color])
+  else
+    color = ColorPair::RGB.random
+  end
+
+  raw_fg, raw_bg = ColorPair.pair_from(color)
   fg, bg = [raw_fg, raw_bg].map(&:to_css)
 
 <<-EOF
 <style>
-body {
-  color: #{fg};
-  background: #{bg};
-/*  color: rgb(46, 224, 224);
-  background: rgb(237, 69, 28);*/
-}
+#{css(fg, bg)}
 </style>
 <p>hello, world!</p>
-<p>diff: #{ColorPair.color_difference(raw_fg, raw_bg)}</p>
-<p>#{raw_fg.to_a}</p>
-<p>#{raw_bg.to_a}</p>
-<p>fg: #{fg}</p>
-<p>bg: #{bg}</p>
+<form>
+<label>Foreground: <input name="color" type="text" value="#{fg}"></label>
+<input type="submit" value="Submit">
+</form>
+<p>Background: #{bg}</p>
+<p>Contrast ratio: #{ColorPair.contrast_ratio(raw_fg, raw_bg).round(2)}:1</p>
+
+<!-- bullshit it and hard-code the height, since we know the number of rows -->
+<textarea rows=26>
+#{css(fg, bg)}
+</textarea>
 EOF
 end
