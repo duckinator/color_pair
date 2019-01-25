@@ -1,11 +1,15 @@
 require 'spec_helper'
 
 describe ColorPair do
-  it 'has a version number' do
-    expect(ColorPair::VERSION).not_to be nil
-  end
+  # ...
+end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+describe ColorPair::RGB do
+  describe '.parse/.to_css' do
+    it 'parses an rgb(...) color correctly' do
+      expect(
+        ColorPair::RGB.parse('rgb(0, 128, 255)').to_rgb_255
+      ).to eq([0, 128, 255])
+    end
   end
 end
