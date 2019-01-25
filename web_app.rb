@@ -53,7 +53,7 @@ get "/" do
 <style>
 #{css(fg, bg)}
 </style>
-<p><a href="/?fg=#{fg}&bg=#{bg}">Permalink.</a> <a href="/">Random.</a></p>
+<p><a href="/?fg=#{fg}&bg=#{bg}">Permalink.</a> <a href="/">Random.</a> <a href="https://contrast-ratio.com/##{fg}-on-#{bg}">Details.</a></p>
 <form>
 <p><label>Foreground: <input name="fg" type="text" value="#{fg}"></label></p>
 <p><label>Background: <input name="bg" type="text" value="#{bg}"></label></p>
