@@ -1,6 +1,8 @@
-$: << './lib'
-require 'sinatra'
-require 'color_pair'
+#!/usr/bin/env ruby
+
+$: << "./lib"
+require "sinatra"
+require "color_pair"
 
 def css(fg, bg)
   <<~EOF
@@ -31,7 +33,7 @@ def css(fg, bg)
   EOF
 end
 
-get '/' do
+get "/" do
   if params[:color]
     color = ColorPair::RGB.parse(params[:color])
   else
