@@ -23,7 +23,7 @@ module ColorPair
       # Arbitrary attempt to get a decent spread of colors, but still
       # place a specific upper bound on the number of items.
       ((0..10).map { |i| i.to_f / 10 } +
-       (0..9).map { |i| (i.to_f / 10) + 0.5 }
+       (0..9).map { |i| (i.to_f / 10) + 0.05 }
       ).sort
     end
 
