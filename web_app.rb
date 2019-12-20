@@ -4,7 +4,7 @@ $: << "./lib"
 require "sinatra"
 require "color_pair"
 
-def css(fg, bg)
+def generate_css(fg, bg)
   <<~EOF
     body {
       padding: 1em;
@@ -30,11 +30,12 @@ def css(fg, bg)
 
     textarea {
       width: 100%;
+      overflow: hidden;
     }
   EOF
 end
 
-get "/" do
+def pair_from(params)
   if params[:fg]
     raw_fg = ColorPair::RGB.parse(params[:fg])
   else
@@ -47,11 +48,20 @@ get "/" do
     raw_fg, raw_bg = ColorPair.pair_from(raw_fg)
   end
 
+  [raw_fg, raw_bg]
+end
+
+get "/" do
+  # ASSUMPTION: The theoretical potential for an endless loop will probably not be realized.
+  raw_fg, raw_bg = pair_from(params) while raw_fg.nil? || raw_bg.nil?
+
   fg, bg = [raw_fg, raw_bg].map(&:to_css)
+
+  css = generate_css(fg, bg)
 
 <<-EOF
 <style>
-#{css(fg, bg)}
+#{css}
 </style>
 <p><a href="/?fg=#{fg}&bg=#{bg}">Permalink.</a> <a href="/">Random.</a> <a href="https://contrast-ratio.com/##{fg}-on-#{bg}">Details.</a></p>
 <form>
@@ -61,9 +71,8 @@ get "/" do
 </form>
 <p>Contrast ratio: #{ColorPair.contrast_ratio(raw_fg, raw_bg).round(2)}:1</p>
 
-<!-- bullshit it and hard-code the height, since we know the number of rows -->
-<textarea rows=26>
-#{css(fg, bg)}
+<textarea rows=#{css.split("\n").length + 1}>
+#{css}
 </textarea>
 EOF
 end
