@@ -66,18 +66,25 @@ module ColorPair
     (al + 0.05) / (bl + 0.05)
   end
 
-  # "Contrast (Minimum): The visual presentation of text and images of text has
-  # a contrast ratio of at least 4.5:1 [...] (Level AA)"
-  # https://www.w3.org/TR/WCAG/#visual-audio-contrast
-  def self.good_pair?(a, b)
+  # "Contrast (Minimum) (Level AA): The visual presentation of text and
+  # images of text has a contrast ratio of at least 4.5:1"
+  #
+  # "Contrast (Enhanced) (Level AAA): The visual presentation of text and
+  # images of text has a contrast ratio of at least 7:1"
+  #
+  # https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
+  # https://www.w3.org/WAI/WCAG21/Understanding/contrast-enhanced.html
+  def self.good_pair?(a, b, enhanced_contrast=true)
     diff = contrast_ratio(a, b)
 
-    #puts "#{diff.round(4)} #{[a, b].inspect}"
-
-    diff >= 4.5
+    if enhanced_contrast
+      return diff >= 7.0
+    else
+      return diff >= 4.5
+    end
   end
 
-  def self.pair_from(base)
+  def self.pair_from(base, enhanced_contrast=true)
     r, g, b = base.to_a
     rgb = r + g + b
     if rgb > 0.5
@@ -96,14 +103,10 @@ module ColorPair
       RGB.values.map { |g|
         RGB.values.map { |b|
           rgb = RGB.new(*[r, g, b])
-          possible << rgb if self.good_pair?(rgb, base)
+          possible << rgb if self.good_pair?(rgb, base, enhanced_contrast)
         }
       }
     }
-
-#    return nil if possible.empty?
-
-#    p possible
 
     [base, possible.sample]
   end
